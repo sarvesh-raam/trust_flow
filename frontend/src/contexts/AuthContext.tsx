@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { api } from "../lib/api";
 import { auth, onAuthStateChanged, type User } from "../lib/firebase";
 
 interface AuthContextType {
@@ -13,8 +14,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      if (u) {
+        try {
+          const idToken = await u.getIdToken();
+          const { data } = await api.post("/auth/google", { firebase_token: idToken });
+          localStorage.setItem("access_token", data.access_token);
+          setUser(u);
+        } catch (err) {
+          console.error("Backend auth exchange failed:", err);
+          localStorage.removeItem("access_token");
+          setUser(null);
+        }
+      } else {
+        localStorage.removeItem("access_token");
+        setUser(null);
+      }
       setLoading(false);
     });
     return unsubscribe;
