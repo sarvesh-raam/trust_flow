@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from db import UploadRunRow
 from workflow_db import db as workflow_db_instance
+from graph import GraphState, NodeInterrupt, document_graph
 # from graph import GraphState, NodeInterrupt, document_graph  # Moved inside functions
 from models import (
     CountryCode,
@@ -200,10 +201,18 @@ async def _run_graph(
     bl_pdf_path: str,
 ) -> None:
     """Background task: run the LangGraph pipeline and update workflow state."""
-    from graph import GraphState, NodeInterrupt, document_graph
-    wf = _workflows[workflow_id]
+
+    # Guard: backend may have restarted, wiping the in-memory dict.
+    wf = _workflows.get(workflow_id)
+    if not wf:
+        log.error("workflow.run_graph.missing", workflow_id=workflow_id)
+        return
+
+    # Set RUNNING immediately so the UI reflects progress.
     wf.status = WorkflowStatus.RUNNING
     wf.updated_at = datetime.utcnow()
+    log.info("workflow.run_graph.start", workflow_id=workflow_id,
+             invoice=invoice_pdf_path, bl=bl_pdf_path)
 
     initial_state = GraphState(
         document_id=document_id,
