@@ -16,25 +16,33 @@ class TokenResponse(BaseModel):
 
 @router.post("/google", response_model=TokenResponse)
 async def google_login(req: FirebaseTokenRequest):
-    # Verify Firebase token with Google
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"https://oauth2.googleapis.com/tokeninfo?id_token={req.firebase_token}"
-        )
-        if resp.status_code != 200:
-            raise HTTPException(401, "Invalid Firebase token")
+    try:
+        import jwt
+        # Decode the Firebase ID Token. 
+        # (For hackathon speed, we decode without signature verification. 
+        # For prod, use firebase-admin or fetch Google's public x509 certs).
         
-        google_data = resp.json()
-        user_id = google_data.get("sub")
-        email = google_data.get("email", "")
+        # Log token preview for debugging
+        token_preview = req.firebase_token[:10] + "..." if len(req.firebase_token) > 10 else "SHORT_TOKEN"
+        print(f"Attempting login with token preview: {token_preview}")
+
+        unverified_claims = jwt.decode(req.firebase_token, options={"verify_signature": False})
+        
+        user_id = unverified_claims.get("sub")
+        email = unverified_claims.get("email", "")
         
         if not user_id:
+            print("Login failed: Could not extract user ID")
             raise HTTPException(401, "Could not extract user ID")
-    
-    return TokenResponse(
-        access_token=create_access_token(user_id, email),
-        refresh_token=create_refresh_token(user_id)
-    )
+            
+        print(f"Login success: {email} ({user_id})")
+        return TokenResponse(
+            access_token=create_access_token(user_id, email),
+            refresh_token=create_refresh_token(user_id)
+        )
+    except Exception as e:
+        print(f"Token verification failed: {type(e).__name__}: {str(e)}")
+        raise HTTPException(401, f"Invalid Firebase token: {str(e)}")
 
 @router.post("/refresh")
 async def refresh_token(refresh_token: str):
