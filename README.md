@@ -1,10 +1,24 @@
 # Trust Flow — Autonomous Customs Compliance Orchestrator
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Production--Ready-success?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
+  <img src="https://img.shields.io/badge/LangGraph-FFAB00?style=for-the-badge&logo=openai" alt="LangGraph">
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase">
+</p>
+
 > HackStrom'26 · Track 3 · Autonomous Document Processing & Compliance Agent  
-> DeepFrog AI Solutions × SRM Institute of Science and Technology
+> **Sarvesh Raam T K** × SRM Institute of Science and Technology
 
 ---
 
-## Problem Statement
+## 📖 Problem Statement
 Manual customs document verification causes significant supply chain delays and results in costly fines for importers and exporters. Discrepancies between Commercial Invoices and Bills of Lading are common yet difficult to detect with traditional template-based systems. No existing solution handles complex layout analysis and multi-country jurisdictional rules while providing integrated human escalation in a single automated pipeline.
 
 ## Solution
@@ -193,7 +207,11 @@ kubectl apply -f k8s/
 
 ---
 
-## Contributors
-Developed with precision by **Shiva** ([github.com/Shiva085000](https://github.com/Shiva085000)) and team for **HackStrom'26**.
+## 👥 Contributors
+Developed with precision by the team for **HackStrom'26**:
+
+- **Sarvesh Raam T K** ([github.com/sarvesh-raam](https://github.com/sarvesh-raam))
+- **Mugundha S** ([github.com/abinavmugundhan](https://github.com/abinavmugundhan))
+- **Mr G** ([github.com/Shiva085000](https://github.com/Shiva085000))
 
 ---
